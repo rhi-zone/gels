@@ -1,0 +1,10 @@
+[package]
+name = "gels-synth"
+description = "Grammar synthesis for gels"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+gels-core = { workspace = true }

@@ -1,0 +1,10 @@
+[package]
+name = "gels-traits"
+description = "Built-in trait detectors for gels"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+gels-core = { workspace = true }
