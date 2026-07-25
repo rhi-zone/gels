@@ -8,10 +8,11 @@ export default withMermaid(
         include: ['mermaid'],
       },
     },
-    title: 'Gels',
+    title: 'gels',
     description: 'Trait-based grammar inference engine',
 
     base: '/gels/',
+    srcExclude: ['**/CLAUDE.md'],
 
     themeConfig: {
       nav: [

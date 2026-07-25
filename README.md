@@ -1,45 +1,43 @@
-# Scaffolding Templates
+# gels
 
-Standard files for new Rust monorepos in the rhi ecosystem.
+Trait-based grammar inference engine: detect syntactic traits from source files, identify
+the language, or synthesize a tree-sitter grammar for unknown ones.
 
-## Usage
+## What it does
 
-Copy files to your new repo and replace placeholders:
+Given a directory of source files, gels runs them through a pipeline:
 
-```bash
-# Copy all scaffolding files
-cp -r scaffolding/. ~/git/new-project/
+1. **Tokenize** — a language-agnostic tokenizer produces a flat token stream.
+2. **Detect traits** — independent `SyntaxTrait` detectors each examine the token stream
+   for one syntactic property (brace-delimited blocks, semicolon terminators, ML-style let
+   bindings, pattern matching, and more) and return a confidence score.
+3. **Identify or synthesize** — detected traits are score-matched against known language
+   profiles. A match above threshold identifies the language; otherwise, the trait
+   fragments are merged into a synthesized tree-sitter `grammar.js`.
 
-# Replace placeholders
-sed -i 's/gels/your-project/g' ~/git/new-project/flake.nix
-sed -i 's/PROJECT_DESCRIPTION/Your description/g' ~/git/new-project/flake.nix
-sed -i 's/gels/your-project/g' ~/git/new-project/docs/package.json
-```
+This gives a path from "some source files in an unfamiliar language" to "a parseable
+grammar" without prior knowledge of that language.
 
-## Files Included
+## Key features
 
-| File | Purpose |
-|------|---------|
-| `.cargo/config.toml` | Target bloat reduction, mold linker hint |
-| `.envrc` | direnv + nix-direnv integration |
-| `.gitignore` | Standard ignores for Rust + Nix + Node |
-| `.githooks/pre-commit` | fmt → clippy (fast checks first) |
-| `.github/workflows/ci.yml` | CI: fmt, clippy, build, test |
-| `.github/workflows/deploy-docs.yml` | VitePress docs to GitHub Pages |
-| `flake.nix` | Nix dev shell with Rust + mold + bun |
-| `docs/package.json` | VitePress with mermaid plugin |
+- **Trait detection** — each syntactic property is its own detector with an independent
+  confidence score.
+- **Language identification** — score-weighted matching of detected trait profiles against
+  known language fingerprints.
+- **Grammar synthesis** — merges detected trait fragments into a usable tree-sitter grammar
+  for unrecognized languages.
+- **Extensible** — implement `SyntaxTrait` to add new detectors; register language profiles
+  to extend identification coverage.
 
-## Placeholders
+## Workspace
 
-- `gels` - lowercase project name (e.g., `interconnect`)
-- `PROJECT_DESCRIPTION` - short description
+- `gels-core` — grammar, profile, and trait types shared across the workspace.
+- `gels-traits` — the trait detectors and the tokenizer.
+- `gels-synth` — merges detected traits into a grammar and emits tree-sitter output.
+- `gels` — the CLI and library entry point (`analyze`, `identify`, `synthesize`).
 
-## Additional Setup
+Full documentation: [docs.rhi.zone/gels](https://docs.rhi.zone/gels/)
 
-After copying, you'll also need:
+## License
 
-1. `Cargo.toml` - workspace manifest
-2. `crates/` - your crate(s)
-3. `docs/.vitepress/config.ts` - VitePress config
-4. `docs/index.md` - docs home page
-5. `CLAUDE.md` - project-specific Claude instructions
+Licensed under MIT OR Apache-2.0.
